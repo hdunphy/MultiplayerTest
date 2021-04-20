@@ -38,26 +38,17 @@ public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
         }
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.collider.CompareTag("Wall"))
-    //    {
-    //        if (--Bounces <= 0)
-    //            DespawnSelf();
-    //    }
-    //}
-
     private void DespawnSelf()
     {
         if (!isDestroyed && IsServer)
         {
             isDestroyed = true;
-            GetComponent<NetworkObject>().Despawn(true);
+            Destroy(gameObject);
         }
     }
 
     public void TakeDamage(float damage)
     {
-        DespawnSelf();
+        Debug.Log("Despawn");
     }
 }

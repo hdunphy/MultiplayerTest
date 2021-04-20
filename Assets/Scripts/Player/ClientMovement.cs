@@ -9,11 +9,12 @@ public class ClientMovement : NetworkBehaviour
     private float MoveSpeed;
     private IMoveableObject Controller;
     private Vector2 nextPosition;
+    private float distance, t;
 
 
     public override void NetworkStart()
     {
-        if(IsServer)
+        if (IsServer)
         {
             enabled = false;
         }
@@ -28,8 +29,11 @@ public class ClientMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         nextPosition = Controller.GetNetworkPosition();
-        float distance = Vector2.Distance(transform.position, nextPosition);
-        float t = distance * (1 / MoveSpeed);
-        transform.position = Vector2.LerpUnclamped(transform.position, nextPosition, t);
+        distance = Vector2.Distance(transform.position, nextPosition);
+        if (distance > 0.001f)
+        {
+            t = distance * (1 / MoveSpeed);
+            transform.position = Vector2.LerpUnclamped(transform.position, nextPosition, t);
+        }
     }
 }

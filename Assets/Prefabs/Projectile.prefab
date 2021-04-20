@@ -60,8 +60,6 @@ GameObject:
   - component: {fileID: 8239033370057145822}
   - component: {fileID: 5142567115177772059}
   - component: {fileID: 128331907112651443}
-  - component: {fileID: 2984628390822852862}
-  - component: {fileID: 7904521482763742374}
   - component: {fileID: 4655045178577622884}
   m_Layer: 0
   m_Name: Projectile
@@ -152,34 +150,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d336b9f2a45e734ebb460ae4e8aa23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectileSpeed: 2
+  ProjectileSpeed: 7
   Damage: 1
   Bounces: 2
   Rb: {fileID: 42515793787885324}
---- !u!114 &2984628390822852862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3263895918037502918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd77b11045eb9c04c8dea1babe465048, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7904521482763742374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3263895918037502918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48ee2537a3688734286a21164d089eab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4655045178577622884
 MonoBehaviour:
   m_ObjectHideFlags: 0

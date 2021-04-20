@@ -2,6 +2,8 @@ using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using System;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
@@ -98,7 +100,13 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     private void SpawnProjectileServerRpc(ServerRpcParams rpcParams = default)
     {
         Projectile _projectile = Instantiate(ProjectilePrefab, FirePoint.position, FirePoint.rotation);
-        _projectile.GetComponent<NetworkObject>().Spawn(destroyWithScene: true);
+        Stream _positionStream = new MemoryStream();
+        var writer = new StreamWriter(_positionStream);
+        writer.Write($"{FirePoint.position.x},{FirePoint.position.y}");
+        writer.Flush();
+        _positionStream.Position = 0;
+
+        _projectile.GetComponent<NetworkObject>().Spawn(_positionStream, destroyWithScene: true);
     }
 
     private void FixedUpdate()
@@ -119,18 +127,19 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
             SpawnProjectileServerRpc();
         }
-
-        //transform.position = NetworkPosition.Value;
     }
 
     public void TakeDamage(float _damage)
     {
         currentHealth -= _damage;
+        
         Debug.Log($"Take Damage {_damage}, Health {currentHealth}");
+        if (!IsServer) Debug.Log("Not called by SERVER!"); //Should enforce this somewhere
+
         if (currentHealth <= 0)
         {
             InputManager.Instance.RemoveController(this);
-            SetPlayerObjectActiveServerRpc(false);
+            SetPlayerObjectActiveClientRpc(false);
         }
     }
 
