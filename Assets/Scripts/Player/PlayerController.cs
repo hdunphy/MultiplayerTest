@@ -4,16 +4,17 @@ using MLAPI.NetworkVariable;
 using System;
 using UnityEngine;
 
-public class PlayerController : NetworkBehaviour, IDamageable
+public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 {
     [SerializeField] private float MoveSpeed;
     [SerializeField] private float RotationSpeed;
     [SerializeField] private float FireRate;
     [SerializeField] private float Health;
-    [SerializeField] private Rigidbody2D Rb;
+    //[SerializeField] private Rigidbody2D Rb;
     [SerializeField] private Transform RotationPoint;
     [SerializeField] private Transform FirePoint;
     [SerializeField] private Projectile ProjectilePrefab;
+
 
     private float turnSmoothVelocity;
     private float m_LastSentMove;
@@ -23,9 +24,14 @@ public class PlayerController : NetworkBehaviour, IDamageable
 
     private const float k_MoveSendRateSeconds = 0.05f;
 
+    public event Action<Vector2> UpdateVelocityDirection;
 
     public NetworkVariableFloat TargetAngle = new NetworkVariableFloat();
     public NetworkVariableVector2 Velocity = new NetworkVariableVector2();
+    public NetworkVariableVector2 NetworkPosition { get; } = new NetworkVariableVector2();
+
+    public float GetMoveSpeed() => MoveSpeed;
+    public Vector2 GetNetworkPosition() => NetworkPosition.Value;
 
     private void Start()
     {
@@ -40,12 +46,13 @@ public class PlayerController : NetworkBehaviour, IDamageable
 
     public void Move(Vector2 inputVector)
     {
-        SetVelocityServerRpc(inputVector);
+        //SetVelocityServerRpc(inputVector);
+        SendCharacterInputServerRpc(inputVector);
     }
 
     public void Look(Vector2 mousePos)
     {
-        if((Time.time - m_LastSentMove) > k_MoveSendRateSeconds) //Can send a move update
+        if ((Time.time - m_LastSentMove) > k_MoveSendRateSeconds) //Can send a move update
         {
             var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
             Vector2 direction = worldPos - transform.position;
@@ -58,9 +65,20 @@ public class PlayerController : NetworkBehaviour, IDamageable
         }
     }
 
+    public void SetNetworkPosition(Vector2 _position)
+    {
+        NetworkPosition.Value = _position;
+    }
+
     public void SetFiring(bool _isFiring)
     {
         isFiring = _isFiring;
+    }
+
+    [ServerRpc]
+    private void SendCharacterInputServerRpc(Vector2 movementTarget)
+    {
+        UpdateVelocityDirection?.Invoke(movementTarget);
     }
 
     [ServerRpc]
@@ -86,7 +104,7 @@ public class PlayerController : NetworkBehaviour, IDamageable
     private void FixedUpdate()
     {
         //Set Velocity
-        Rb.velocity = Velocity.Value * Time.deltaTime;
+        //Rb.velocity = Velocity.Value * Time.deltaTime;
 
         //Set gun rotation
         float angle = Mathf.SmoothDampAngle(RotationPoint.eulerAngles.z, TargetAngle.Value, ref turnSmoothVelocity, RotationSpeed);
@@ -95,19 +113,21 @@ public class PlayerController : NetworkBehaviour, IDamageable
 
     private void Update()
     {
-        if(isFiring && (Time.time - m_LastShot) > FireRate)
+        if (isFiring && (Time.time - m_LastShot) > FireRate)
         {
             m_LastShot = Time.time;
 
             SpawnProjectileServerRpc();
         }
+
+        //transform.position = NetworkPosition.Value;
     }
 
     public void TakeDamage(float _damage)
     {
         currentHealth -= _damage;
         Debug.Log($"Take Damage {_damage}, Health {currentHealth}");
-        if(currentHealth <= 0)
+        if (currentHealth <= 0)
         {
             InputManager.Instance.RemoveController(this);
             SetPlayerObjectActiveServerRpc(false);
