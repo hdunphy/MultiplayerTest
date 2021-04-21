@@ -14,7 +14,8 @@ public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
     {
         if (!IsServer)
         {
-            enabled = false;
+            Destroy(this);
+            //enabled = false;
         }
     }
 
@@ -28,6 +29,7 @@ public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
     {
         if (collider.TryGetComponent(out IDamageable damageable))
         {
+            Debug.Log($"Is on server: {IsServer}");
             damageable.TakeDamage(Damage);
             DespawnSelf();
         }

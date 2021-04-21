@@ -23,9 +23,24 @@ public class InputManager : NetworkBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if(PlayerController != null)
+        {
+            PlayerController.OnDiedEvent -= PlayerDied;
+        }
+    }
+
     public void SetLocalPlayerController(PlayerController _PlayerController)
     {
         PlayerController = _PlayerController;
+        _PlayerController.OnDiedEvent += PlayerDied;
+    }
+
+    private void PlayerDied()
+    {
+        PlayerController.OnDiedEvent -= PlayerDied;
+        PlayerController = null;
     }
 
     public void OnMove(CallbackContext callback)
@@ -46,9 +61,9 @@ public class InputManager : NetworkBehaviour
             PlayerController.SetFiring(callback.performed);
     }
 
-    public void RemoveController(PlayerController _playerController)
+    public void OnDropMine(CallbackContext callback)
     {
-        if (_playerController == PlayerController)
-            PlayerController = null;
+        if (PlayerController != null)
+            PlayerController.SetDropMine(callback.performed);
     }
 }

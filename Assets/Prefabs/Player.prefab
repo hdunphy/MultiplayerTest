@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1802700121097614889}
   - component: {fileID: 2715653061797554966}
+  - component: {fileID: 1385829063091979629}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -133,6 +134,19 @@ MonoBehaviour:
   PrefabHashGenerator: Player
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!114 &1385829063091979629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3779203040405500288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4f85fca2efcfd44aaca50e17d696e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerObject: {fileID: 6392270002747589768}
 --- !u!1 &6392270002747589768
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,10 +294,12 @@ MonoBehaviour:
   MoveSpeed: 5
   RotationSpeed: 0.2
   FireRate: 1
+  MineDropRate: 1
   Health: 1
   RotationPoint: {fileID: 6937130741784527265}
   FirePoint: {fileID: 7977574843901558834}
   ProjectilePrefab: {fileID: 128331907112651443, guid: 751ddd23188b73746a175936462a6fe9, type: 3}
+  MinePrefab: {fileID: 7602305186062633390, guid: 529771811978b3a4c9cf87f8db6191b7, type: 3}
   TargetAngle:
     m_InternalValue: 0
   Velocity:
@@ -300,8 +316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd77b11045eb9c04c8dea1babe465048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rb: {fileID: 9218404428551912117}
-  PlayerController: {fileID: 1298838462784092107}
 --- !u!114 &293833196027046726
 MonoBehaviour:
   m_ObjectHideFlags: 0

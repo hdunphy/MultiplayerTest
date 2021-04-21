@@ -17,7 +17,9 @@ namespace HelloWorld
             {
                 StatusLabels();
 
-                SubmitNewPosition();
+                Respawn();
+
+                Leave();
             }
 
             GUILayout.EndArea();
@@ -40,20 +42,47 @@ namespace HelloWorld
             GUILayout.Label("Mode: " + mode);
         }
 
-        static void SubmitNewPosition()
+        static void Leave()
         {
-            if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
+            if (GUILayout.Button("Leave"))
+            {
+                Disconnect();
+            }
+        }
+
+        static void Respawn()
+        {
+            if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Respawn" : "Request Respawn"))
             {
                 if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
                     out var networkedClient))
                 {
-                    var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
+                    //TODO: Change to player respawner
+                    var player = networkedClient.PlayerObject.GetComponent<PlayerManager>();
                     if (player)
                     {
-                        player.Move();
+                        player.Respawn();
                     }
                 }
             }
+        }
+
+        static void Disconnect()
+        {
+            if (NetworkManager.Singleton.IsHost)
+            {
+                NetworkManager.Singleton.StopHost();
+            }
+            else if (NetworkManager.Singleton.IsClient)
+            {
+                NetworkManager.Singleton.StopClient();
+            }
+            else if (NetworkManager.Singleton.IsServer)
+            {
+                NetworkManager.Singleton.StopServer();
+            }
+
+            //UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
         }
     }
 }

@@ -11,22 +11,27 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     [SerializeField] private float MoveSpeed;
     [SerializeField] private float RotationSpeed;
     [SerializeField] private float FireRate;
+    [SerializeField] private float MineDropRate;
     [SerializeField] private float Health;
     //[SerializeField] private Rigidbody2D Rb;
     [SerializeField] private Transform RotationPoint;
     [SerializeField] private Transform FirePoint;
     [SerializeField] private Projectile ProjectilePrefab;
+    [SerializeField] private GameObject MinePrefab;
 
 
     private float turnSmoothVelocity;
     private float m_LastSentMove;
     private float m_LastShot;
+    private float m_LastMine;
     private bool isFiring;
+    private bool isDropingMine;
     private float currentHealth;
 
     private const float k_MoveSendRateSeconds = 0.05f;
 
     public event Action<Vector2> UpdateVelocityDirection;
+    public event Action OnDiedEvent;
 
     public NetworkVariableFloat TargetAngle = new NetworkVariableFloat();
     public NetworkVariableVector2 Velocity = new NetworkVariableVector2();
@@ -36,6 +41,11 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     public Vector2 GetNetworkPosition() => NetworkPosition.Value;
 
     private void Start()
+    {
+        Initialize();
+    }
+
+    public void Initialize()
     {
         isFiring = false;
         currentHealth = Health;
@@ -48,7 +58,6 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
     public void Move(Vector2 inputVector)
     {
-        //SetVelocityServerRpc(inputVector);
         SendCharacterInputServerRpc(inputVector);
     }
 
@@ -77,16 +86,15 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
         isFiring = _isFiring;
     }
 
+    public void SetDropMine(bool _isDropingMine)
+    {
+        isDropingMine = _isDropingMine;
+    }
+
     [ServerRpc]
     private void SendCharacterInputServerRpc(Vector2 movementTarget)
     {
         UpdateVelocityDirection?.Invoke(movementTarget);
-    }
-
-    [ServerRpc]
-    private void SetVelocityServerRpc(Vector2 inputVector, ServerRpcParams rpcParams = default)
-    {
-        Velocity.Value = inputVector.normalized * MoveSpeed;
     }
 
     [ServerRpc]
@@ -100,13 +108,14 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     private void SpawnProjectileServerRpc(ServerRpcParams rpcParams = default)
     {
         Projectile _projectile = Instantiate(ProjectilePrefab, FirePoint.position, FirePoint.rotation);
-        Stream _positionStream = new MemoryStream();
-        var writer = new StreamWriter(_positionStream);
-        writer.Write($"{FirePoint.position.x},{FirePoint.position.y}");
-        writer.Flush();
-        _positionStream.Position = 0;
+        _projectile.GetComponent<NetworkObject>().Spawn();
+    }
 
-        _projectile.GetComponent<NetworkObject>().Spawn(_positionStream, destroyWithScene: true);
+    [ServerRpc]
+    private void SpawnMineServerRpc(ServerRpcParams rpcParams = default)
+    {
+        GameObject _mine = Instantiate(MinePrefab, transform.position, Quaternion.identity);
+        _mine.GetComponent<NetworkObject>().Spawn();
     }
 
     private void FixedUpdate()
@@ -127,6 +136,12 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
             SpawnProjectileServerRpc();
         }
+        else if (isDropingMine && (Time.time - m_LastMine) > MineDropRate)
+        {
+            m_LastMine = Time.time;
+
+            SpawnMineServerRpc();
+        }
     }
 
     public void TakeDamage(float _damage)
@@ -138,20 +153,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
         if (currentHealth <= 0)
         {
-            InputManager.Instance.RemoveController(this);
-            SetPlayerObjectActiveClientRpc(false);
+            OnDiedEvent?.Invoke();
         }
-    }
-
-    [ServerRpc]
-    private void SetPlayerObjectActiveServerRpc(bool _isActive)
-    {
-        SetPlayerObjectActiveClientRpc(_isActive);
-    }
-
-    [ClientRpc]
-    private void SetPlayerObjectActiveClientRpc(bool _isActive)
-    {
-        gameObject.SetActive(_isActive);
     }
 }
