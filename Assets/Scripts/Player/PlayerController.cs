@@ -6,16 +6,18 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
+public class PlayerController : NetworkBehaviour, IMoveableObject
 {
     [SerializeField] private float MoveSpeed;
     [SerializeField] private float RotationSpeed;
+    [SerializeField] private float TankRotationSpeed;
     [SerializeField] private float FireRate;
     [SerializeField] private float MineDropRate;
     [SerializeField] private float Health;
     //[SerializeField] private Rigidbody2D Rb;
     [SerializeField] private Transform RotationPoint;
     [SerializeField] private Transform FirePoint;
+    [SerializeField] private Transform TankBaseTransform;
     [SerializeField] private Projectile ProjectilePrefab;
     [SerializeField] private GameObject MinePrefab;
 
@@ -36,6 +38,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     public NetworkVariableFloat TargetAngle = new NetworkVariableFloat();
     public NetworkVariableVector2 Velocity = new NetworkVariableVector2();
     public NetworkVariableVector2 NetworkPosition { get; } = new NetworkVariableVector2();
+    public NetworkVariableVector2 FacingDirection { get; } = new NetworkVariableVector2();
 
     public float GetMoveSpeed() => MoveSpeed;
     public Vector2 GetNetworkPosition() => NetworkPosition.Value;
@@ -49,6 +52,7 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     {
         isFiring = false;
         currentHealth = Health;
+        FacingDirection.Value = TankBaseTransform.up;
 
         if (IsOwner)
         {
@@ -79,6 +83,11 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
     public void SetNetworkPosition(Vector2 _position)
     {
         NetworkPosition.Value = _position;
+    }
+
+    public void SetFacingDirection(Vector2 _facingDirection)
+    {
+        FacingDirection.Value = _facingDirection;
     }
 
     public void SetFiring(bool _isFiring)
@@ -120,9 +129,6 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
     private void FixedUpdate()
     {
-        //Set Velocity
-        //Rb.velocity = Velocity.Value * Time.deltaTime;
-
         //Set gun rotation
         float angle = Mathf.SmoothDampAngle(RotationPoint.eulerAngles.z, TargetAngle.Value, ref turnSmoothVelocity, RotationSpeed);
         RotationPoint.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -142,6 +148,8 @@ public class PlayerController : NetworkBehaviour, IDamageable, IMoveableObject
 
             SpawnMineServerRpc();
         }
+
+        TankBaseTransform.up = Vector2.MoveTowards(TankBaseTransform.up, FacingDirection.Value, TankRotationSpeed);
     }
 
     public void TakeDamage(float _damage)

@@ -10,22 +10,23 @@ public class Projectile : NetworkBehaviour
     [SerializeField] private float Damage;
     [SerializeField, Range(0, 4)] private int Bounces;
     [SerializeField] private Rigidbody2D Rb;
-    //public NetworkVariableVector2 NetworkPosition { get; } = new NetworkVariableVector2();
 
-    //public event Action<Vector2> UpdateVelocityDirection;
+    private Vector2 velocity;
 
     private void Start()
     {
-        //UpdateVelocityDirection?.Invoke(transform.right);
-        //NetworkPosition.Value = transform.position;
         Rb.velocity = transform.right * ProjectileSpeed;
+        velocity = Rb.velocity;
     }
 
-    //public float GetMoveSpeed() => ProjectileSpeed;
-
-    //public Vector2 GetNetworkPosition() => NetworkPosition.Value;
-
-    //public void SetNetworkPosition(Vector2 _position) => NetworkPosition.Value = _position;
+    private void Update()
+    {
+        if(Rb.velocity != velocity)
+        {
+            velocity = Rb.velocity;
+            transform.right = velocity;
+        }
+    }
 
     public float GetDamage() => Damage;
     public int GetBounces() => Bounces;

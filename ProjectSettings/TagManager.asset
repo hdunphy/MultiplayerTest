@@ -15,7 +15,7 @@ TagManager:
   - Player
   - Projectile
   - Wall
-  - 
+  - Game Assets
   - 
   - 
   - 
@@ -41,4 +41,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2872750971
+    locked: 0
+  - name: Foreground
+    uniqueID: 1641970741
+    locked: 0
+  - name: Player
+    uniqueID: 2897766895
+    locked: 0
+  - name: Overlay
+    uniqueID: 3976354973
+    locked: 0
+  - name: UI
+    uniqueID: 1597358453
     locked: 0

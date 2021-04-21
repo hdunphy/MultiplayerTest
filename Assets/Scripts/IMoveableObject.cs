@@ -11,4 +11,5 @@ public interface IMoveableObject
     public event Action<Vector2> UpdateVelocityDirection;
 
     void SetNetworkPosition(Vector2 position);
+    void SetFacingDirection(Vector2 vector2);
 }

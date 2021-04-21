@@ -34,7 +34,9 @@ public class ServerRBMovement : NetworkBehaviour
 
     private void OnClientChangeDirection(Vector2 _direction)
     {
-        Rb.velocity = _direction.normalized * MoveSpeed;
+        var normalizedDirection = _direction.normalized;
+        Rb.velocity = normalizedDirection * MoveSpeed;
+        Controller.SetFacingDirection(normalizedDirection);
     }
 
     private void OnDestroy()
