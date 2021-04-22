@@ -17,6 +17,8 @@ public class MineServerController : NetworkBehaviour
 
     public override void NetworkStart()
     {
+        var clientController = GetComponent<MineClientController>();
+        if (clientController != null) clientController.SetTimer(TimerDelay);
         if (!IsServer) Destroy(this);
     }
 

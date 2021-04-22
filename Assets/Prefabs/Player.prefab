@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 1802700121097614889}
   - component: {fileID: 2715653061797554966}
   - component: {fileID: 1385829063091979629}
+  - component: {fileID: 6794784330197116971}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -231,6 +232,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerObject: {fileID: 6392270002747589768}
+--- !u!114 &6794784330197116971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3779203040405500288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36e0f3e80a5a3524d9c3d537bae152f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameEvent: {fileID: 11400000, guid: 73bfbdd13de00a04ba39bdaaf74f365b, type: 2}
+  _unityEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1385829063091979629}
+        m_TargetAssemblyTypeName: PlayerManager, Assembly-CSharp
+        m_MethodName: PlayerController_OnDiedEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6392270002747589768
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,10 +388,7 @@ MonoBehaviour:
   TankBaseTransform: {fileID: 2074874635803611306}
   ProjectilePrefab: {fileID: 128331907112651443, guid: 751ddd23188b73746a175936462a6fe9, type: 3}
   MinePrefab: {fileID: 7602305186062633390, guid: 529771811978b3a4c9cf87f8db6191b7, type: 3}
-  TargetAngle:
-    m_InternalValue: 0
-  Velocity:
-    m_InternalValue: {x: 0, y: 0}
+  OnPlayerDied: {fileID: 11400000, guid: 73bfbdd13de00a04ba39bdaaf74f365b, type: 2}
 --- !u!114 &5258400066489567006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,7 +592,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8223352440363999985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 0.375, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1743894749106301021}

@@ -58,14 +58,12 @@ public class PlayerManager : NetworkBehaviour
             Debug.Log("Respawn Client");
             SetPlayerObjectActiveServerRpc(true);
         }
-        //SetPlayerObjectActiveServerRpc(true);
     }
 
     [ServerRpc]
     private void SetPlayerObjectActiveServerRpc(bool _isActive)
     {
         IsPlayerActive.Value = _isActive;
-        //SetPlayerObjectActiveClientRpc(_isActive);
     }
 
     [ClientRpc]

@@ -36,7 +36,6 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     public event Action OnDiedEvent;
 
     public NetworkVariableFloat TargetAngle = new NetworkVariableFloat();
-    public NetworkVariableVector2 Velocity = new NetworkVariableVector2();
     public NetworkVariableVector2 NetworkPosition { get; } = new NetworkVariableVector2();
     public NetworkVariableVector2 FacingDirection { get; } = new NetworkVariableVector2();
 

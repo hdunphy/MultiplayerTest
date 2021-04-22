@@ -5023,6 +5023,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Explosion: {fileID: 6756995271254207906}
   MineRenderer: {fileID: 4265390803105147226}
+  FlashColor: {r: 1, g: 0, b: 0, a: 1}
+  FlashTime: 0.05
 --- !u!114 &6618199215885417419
 MonoBehaviour:
   m_ObjectHideFlags: 0
