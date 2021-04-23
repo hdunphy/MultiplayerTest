@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-public class Projectile : NetworkBehaviour
+public class Projectile : IShootable
 {
     [SerializeField] private float ProjectileSpeed;
     [SerializeField] private float Damage;

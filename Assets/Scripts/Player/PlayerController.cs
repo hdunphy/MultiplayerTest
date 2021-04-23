@@ -2,6 +2,7 @@ using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -11,23 +12,15 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     [SerializeField] private float MoveSpeed;
     [SerializeField] private float RotationSpeed;
     [SerializeField] private float TankRotationSpeed;
-    [SerializeField] private float FireRate;
-    [SerializeField] private float MineDropRate;
     [SerializeField] private float Health;
     //[SerializeField] private Rigidbody2D Rb;
     [SerializeField] private Transform RotationPoint;
-    [SerializeField] private Transform FirePoint;
     [SerializeField] private Transform TankBaseTransform;
-    [SerializeField] private Projectile ProjectilePrefab;
-    [SerializeField] private GameObject MinePrefab;
+    [SerializeField] private List<PlayerFiringController> FiringControllers;
 
 
     private float turnSmoothVelocity;
     private float m_LastSentMove;
-    private float m_LastShot;
-    private float m_LastMine;
-    private bool isFiring;
-    private bool isDropingMine;
     private float currentHealth;
 
     private const float k_MoveSendRateSeconds = 0.05f;
@@ -49,7 +42,6 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
 
     public void Initialize()
     {
-        isFiring = false;
         currentHealth = Health;
         FacingDirection.Value = TankBaseTransform.up;
 
@@ -89,14 +81,15 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
         FacingDirection.Value = _facingDirection;
     }
 
-    public void SetFiring(bool _isFiring)
+    public void SetFiring(bool _isFiring, int index)
     {
-        isFiring = _isFiring;
+        SetIsFiringControllerServerRpc(_isFiring, index);
     }
 
-    public void SetDropMine(bool _isDropingMine)
+    [ServerRpc]
+    private void SetIsFiringControllerServerRpc(bool _isFiring, int index)
     {
-        isDropingMine = _isDropingMine;
+        FiringControllers[index].SetIsFiring(_isFiring);
     }
 
     [ServerRpc]
@@ -112,20 +105,6 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
         TargetAngle.Value = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
     }
 
-    [ServerRpc]
-    private void SpawnProjectileServerRpc(ServerRpcParams rpcParams = default)
-    {
-        Projectile _projectile = Instantiate(ProjectilePrefab, FirePoint.position, FirePoint.rotation);
-        _projectile.GetComponent<NetworkObject>().Spawn();
-    }
-
-    [ServerRpc]
-    private void SpawnMineServerRpc(ServerRpcParams rpcParams = default)
-    {
-        GameObject _mine = Instantiate(MinePrefab, transform.position, Quaternion.identity);
-        _mine.GetComponent<NetworkObject>().Spawn();
-    }
-
     private void FixedUpdate()
     {
         //Set gun rotation
@@ -135,19 +114,6 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
 
     private void Update()
     {
-        if (isFiring && (Time.time - m_LastShot) > FireRate)
-        {
-            m_LastShot = Time.time;
-
-            SpawnProjectileServerRpc();
-        }
-        else if (isDropingMine && (Time.time - m_LastMine) > MineDropRate)
-        {
-            m_LastMine = Time.time;
-
-            SpawnMineServerRpc();
-        }
-
         TankBaseTransform.up = Vector2.MoveTowards(TankBaseTransform.up, FacingDirection.Value, TankRotationSpeed);
     }
 

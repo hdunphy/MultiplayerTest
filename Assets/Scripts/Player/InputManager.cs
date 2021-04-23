@@ -58,12 +58,12 @@ public class InputManager : NetworkBehaviour
     public void OnFire(CallbackContext callback)
     {
         if (PlayerController != null)
-            PlayerController.SetFiring(callback.performed);
+            PlayerController.SetFiring(callback.performed, 0);
     }
 
     public void OnDropMine(CallbackContext callback)
     {
         if (PlayerController != null)
-            PlayerController.SetDropMine(callback.performed);
+            PlayerController.SetFiring(callback.performed, 1);
     }
 }

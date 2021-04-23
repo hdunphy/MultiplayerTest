@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MineServerController : NetworkBehaviour
+public class MineServerController : IShootable
 {
     [SerializeField] private float TimerDelay;
     [SerializeField] private float ExplosionRadius;
