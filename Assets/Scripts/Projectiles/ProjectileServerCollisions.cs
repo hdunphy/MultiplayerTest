@@ -1,11 +1,14 @@
 using MLAPI;
+using MLAPI.Messaging;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Projectile))]
-public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
+public class ProjectileServerCollisions : IShootable, IDamageable
 {
+    private Projectile Projectile;
+
     private float Damage;
     private int Bounces;
     private bool isDestroyed = false;
@@ -21,15 +24,15 @@ public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
 
     private void Start()
     {
-        Damage = GetComponent<Projectile>().GetDamage();
-        Bounces = GetComponent<Projectile>().GetBounces();
+        Projectile = GetComponent<Projectile>();
+        Damage = Projectile.GetDamage();
+        Bounces = Projectile.GetBounces();
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.TryGetComponent(out IDamageable damageable))
         {
-            Debug.Log($"Is on server: {IsServer}");
             damageable.TakeDamage(Damage);
             DespawnSelf();
         }
@@ -44,9 +47,16 @@ public class ProjectileServerCollisions : NetworkBehaviour, IDamageable
     {
         if (!isDestroyed && IsServer)
         {
+            DetachParticlesClientRpc();
             isDestroyed = true;
-            Destroy(gameObject);
+            Destroy(gameObject, 0.01f);
         }
+    }
+
+    [ClientRpc]
+    private void DetachParticlesClientRpc()
+    {
+        Projectile.DetachParticle();
     }
 
     public void TakeDamage(float damage)

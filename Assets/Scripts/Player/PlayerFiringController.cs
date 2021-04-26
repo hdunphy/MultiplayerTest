@@ -1,9 +1,5 @@
 using MLAPI;
 using MLAPI.Messaging;
-using MLAPI.NetworkVariable;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //Server only
@@ -13,6 +9,7 @@ public class PlayerFiringController : NetworkBehaviour
     [SerializeField] float FireRate;
     [SerializeField] Transform FirePoint;
     [SerializeField, Tooltip("Must have IShootable Component")] IShootable PrefabToShoot;
+    [SerializeField] GameEvent PlayerFireEvent;
 
     public bool IsFiring { get; private set; }
 
@@ -39,19 +36,20 @@ public class PlayerFiringController : NetworkBehaviour
 
     private void SpawnPrefab()
     {
+        //Debug.Log($"Owner {OwnerClientId} vs Network Owner {transform.parent.GetComponent<NetworkObject>().OwnerClientId}"); //Same
+        ShootEventClientRpc(OwnerClientId);
         var _prefab = Instantiate(PrefabToShoot, FirePoint.position, FirePoint.rotation);
         _prefab.Initialize(this);
         _prefab.GetComponent<NetworkObject>().Spawn();
     }
 
+    [ClientRpc]
+    private void ShootEventClientRpc(ulong _ownerClientId)
+    {
+        PlayerFireEvent?.Invoke(_ownerClientId);
+    }
+
     public void SetIsFiring(bool _isFiring) => IsFiring = _isFiring;
     public void AddPrefab() => CurrentPrefabCount++;
     public void RemovePrefab() => CurrentPrefabCount--;
-
-    //[ServerRpc]
-    //private void SpawnPrefabServerRpc(ServerRpcParams rpcParams = default)
-    //{
-    //    var _prefab = Instantiate(PrefabToShoot, FirePoint.position, FirePoint.rotation);
-    //    _prefab.GetComponent<NetworkObject>().Spawn();
-    //}
 }

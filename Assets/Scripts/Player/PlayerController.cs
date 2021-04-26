@@ -35,57 +35,26 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     public float GetMoveSpeed() => MoveSpeed;
     public Vector2 GetNetworkPosition() => NetworkPosition.Value;
 
+    #region Unity Functions
     private void Start()
     {
         Initialize();
     }
-
-    public void Initialize()
+    private void FixedUpdate()
     {
-        currentHealth = Health;
-        FacingDirection.Value = TankBaseTransform.up;
-
-        if (IsOwner)
-        {
-            InputManager.Instance.SetLocalPlayerController(this);
-        }
+        //Set gun rotation
+        float angle = Mathf.SmoothDampAngle(RotationPoint.eulerAngles.z, TargetAngle.Value, ref turnSmoothVelocity, RotationSpeed);
+        RotationPoint.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    public void Move(Vector2 inputVector)
+    private void Update()
     {
-        SendCharacterInputServerRpc(inputVector);
+        TankBaseTransform.up = Vector2.MoveTowards(TankBaseTransform.up, FacingDirection.Value, TankRotationSpeed);
     }
+    #endregion
 
-    public void Look(Vector2 mousePos)
-    {
-        if ((Time.time - m_LastSentMove) > k_MoveSendRateSeconds) //Can send a move update
-        {
-            var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-            Vector2 direction = worldPos - transform.position;
-
-            if (direction.sqrMagnitude > 0.01f)
-            {
-                m_LastSentMove = Time.time;
-                SetTargetAngleServerRpc(direction);
-            }
-        }
-    }
-
-    public void SetNetworkPosition(Vector2 _position)
-    {
-        NetworkPosition.Value = _position;
-    }
-
-    public void SetFacingDirection(Vector2 _facingDirection)
-    {
-        FacingDirection.Value = _facingDirection;
-    }
-
-    public void SetFiring(bool _isFiring, int index)
-    {
-        SetIsFiringControllerServerRpc(_isFiring, index);
-    }
-
+    #region Network RPCs
+    /* Server RPCs */
     [ServerRpc]
     private void SetIsFiringControllerServerRpc(bool _isFiring, int index)
     {
@@ -105,22 +74,48 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
         TargetAngle.Value = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
     }
 
-    private void FixedUpdate()
+    /* Client RPCs */
+    [ClientRpc]
+    public void OnBulletShotClientRpc(ulong FromClientId)
     {
-        //Set gun rotation
-        float angle = Mathf.SmoothDampAngle(RotationPoint.eulerAngles.z, TargetAngle.Value, ref turnSmoothVelocity, RotationSpeed);
-        RotationPoint.rotation = Quaternion.Euler(0f, 0f, angle);
+        if(FromClientId == OwnerClientId)
+        {
+            Debug.Log($"I Shot ({FromClientId}, {OwnerClientId}");
+        }
+    }
+    #endregion
+
+    #region Helper Functions
+    public void Initialize()
+    {
+        currentHealth = Health;
+        FacingDirection.Value = TankBaseTransform.up;
+
+        if (IsOwner)
+        {
+            InputManager.Instance.SetLocalPlayerController(this);
+        }
     }
 
-    private void Update()
+    public void SetNetworkPosition(Vector2 _position)
     {
-        TankBaseTransform.up = Vector2.MoveTowards(TankBaseTransform.up, FacingDirection.Value, TankRotationSpeed);
+        NetworkPosition.Value = _position;
+    }
+
+    public void SetFacingDirection(Vector2 _facingDirection)
+    {
+        FacingDirection.Value = _facingDirection;
+    }
+
+    public void SetFiring(bool _isFiring, int index)
+    {
+        SetIsFiringControllerServerRpc(_isFiring, index);
     }
 
     public void TakeDamage(float _damage)
     {
         currentHealth -= _damage;
-        
+
         Debug.Log($"Take Damage {_damage}, Health {currentHealth}");
         if (!IsServer) Debug.Log("Not called by SERVER!"); //Should enforce this somewhere
 
@@ -129,4 +124,27 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
             OnDiedEvent?.Invoke();
         }
     }
+    #endregion
+
+    #region Inputs
+    public void Move(Vector2 inputVector)
+    {
+        SendCharacterInputServerRpc(inputVector);
+    }
+
+    public void Look(Vector2 mousePos)
+    {
+        if ((Time.time - m_LastSentMove) > k_MoveSendRateSeconds) //Can send a move update
+        {
+            var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            Vector2 direction = worldPos - transform.position;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                m_LastSentMove = Time.time;
+                SetTargetAngleServerRpc(direction);
+            }
+        }
+    }
+    #endregion
 }

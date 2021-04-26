@@ -13578,50 +13578,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee4d3e26f8c2a454fa343ca89e5ccb23, type: 3}
---- !u!1 &1888130910 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7770408771256085202, guid: 756e8d82887c4df4094794ec6e2aadfb, type: 3}
-  m_PrefabInstance: {fileID: 634916119}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1888130912 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7770408771256085204, guid: 756e8d82887c4df4094794ec6e2aadfb, type: 3}
-  m_PrefabInstance: {fileID: 634916119}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888130910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7f6eb83b4a4156429cb5e6711925054, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1888130914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888130910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36e0f3e80a5a3524d9c3d537bae152f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _gameEvent: {fileID: 11400000, guid: 73bfbdd13de00a04ba39bdaaf74f365b, type: 2}
-  _unityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1888130912}
-        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: PlayerDied
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &2089983810
 PrefabInstance:
   m_ObjectHideFlags: 0
