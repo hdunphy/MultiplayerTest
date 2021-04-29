@@ -1,11 +1,15 @@
 
 using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace HelloWorld
 {
-    public class HelloWorldManager : MonoBehaviour
+    public class ConnectionManager : MonoBehaviour
     {
+        private static string PlayerPrefabHashString = "Player";
+
+
         void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10, 10, 300, 300));
@@ -27,9 +31,19 @@ namespace HelloWorld
 
         static void StartButtons()
         {
-            if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
+            if (GUILayout.Button("Host"))
+            {
+                NetworkManager.Singleton.ConnectionApprovalCallback += ClientConnectionApproval;
+                NetworkManager.Singleton.StartHost(SpawnLocationManager.GetRandomSpawn(), Quaternion.identity);
+            }
             if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
             if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
+        }
+
+        private static void ClientConnectionApproval(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
+        {
+            ulong? prefabHash = NetworkSpawnManager.GetPrefabHashFromGenerator(PlayerPrefabHashString);
+            callback(true, prefabHash, true, SpawnLocationManager.GetRandomSpawn(), Quaternion.identity);
         }
 
         static void StatusLabels()
@@ -71,6 +85,7 @@ namespace HelloWorld
         {
             if (NetworkManager.Singleton.IsHost)
             {
+                NetworkManager.Singleton.ConnectionApprovalCallback -= ClientConnectionApproval;
                 NetworkManager.Singleton.StopHost();
             }
             else if (NetworkManager.Singleton.IsClient)

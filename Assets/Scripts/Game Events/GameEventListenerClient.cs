@@ -5,11 +5,11 @@ using UnityEngine.Events;
 
 public class GameEventListenerClient : GameEventListener
 {
-    [SerializeField] NetworkObject NetworkObject;
+    [SerializeField] NetworkBehaviour NetworkBehavior;
     public override void RaiseEvent(ulong ClientId)
     {
-        Debug.Log($"Client: {ClientId}, Owner: {NetworkObject.OwnerClientId}");
-        if (NetworkObject.OwnerClientId == ClientId)
+        //Debug.Log($"GameObject {gameObject.name}. Client: {ClientId}, Owner: {NetworkBehavior.OwnerClientId}");
+        if (NetworkBehavior.OwnerClientId == ClientId)
         {
             _unityEvent.Invoke(ClientId);
         }

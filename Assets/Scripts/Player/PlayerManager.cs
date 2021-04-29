@@ -23,7 +23,6 @@ public class PlayerManager : NetworkBehaviour
 
     private void IsPlayerActiveValueChanged(bool previousValue, bool newValue)
     {
-        Debug.Log($"Changed Player Active Value {newValue}");
         PlayerObject.SetActive(newValue);
         if (newValue)
         {
@@ -33,7 +32,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnDestroy()
     {
-        if(PlayerController != null)
+        if (PlayerController != null)
         {
             PlayerController.OnDiedEvent -= PlayerController_OnDiedEvent;
         }
@@ -42,8 +41,21 @@ public class PlayerManager : NetworkBehaviour
     //Should only be run by the SERVER
     private void PlayerController_OnDiedEvent()
     {
+        if (PlayerController.HasLivesLeft)
+            StartCoroutine(InGamePlayerRespawn());
+
+
         IsPlayerActive.Value = false;
         if (!NetworkManager.Singleton.IsServer) Debug.LogWarning("Ran OnDiedEvent on server");
+    }
+
+    //Should only be run by the SERVER
+    private IEnumerator InGamePlayerRespawn()
+    {
+        float _respawnTime = PlayerController._RespawnTime;
+        yield return new WaitForSeconds(_respawnTime);
+
+        Respawn();
     }
 
     public void Respawn()
@@ -51,7 +63,7 @@ public class PlayerManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             Debug.Log("Respawn Server");
-            IsPlayerActive.Value = true;
+            SetPlayerObjectActive(true);
         }
         else
         {
@@ -63,14 +75,15 @@ public class PlayerManager : NetworkBehaviour
     [ServerRpc]
     private void SetPlayerObjectActiveServerRpc(bool _isActive)
     {
-        IsPlayerActive.Value = _isActive;
+        SetPlayerObjectActive(_isActive);
     }
 
-    [ClientRpc]
-    private void SetPlayerObjectActiveClientRpc(bool _isActive)
+    private void SetPlayerObjectActive(bool _isActive)
     {
-        PlayerObject.SetActive(_isActive);
-        if(_isActive)
-            PlayerObject.GetComponent<PlayerController>().Initialize();
+        if (_isActive)
+        {
+            PlayerController.SetTransformPosition(SpawnLocationManager.GetRandomSpawn());
+        }
+        IsPlayerActive.Value = _isActive;
     }
 }

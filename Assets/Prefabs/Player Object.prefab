@@ -243,11 +243,14 @@ MonoBehaviour:
   RotationSpeed: 0.2
   TankRotationSpeed: 0.0075
   Health: 1
+  RespawnTime: 1
+  Lives: 5
   RotationPoint: {fileID: 8374090203539253745}
   TankBaseTransform: {fileID: 628378004904589562}
   FiringControllers:
   - {fileID: 3276242827957003812}
   - {fileID: 4206059394320797209}
+  OnDiedGameEvent: {fileID: 11400000, guid: 73bfbdd13de00a04ba39bdaaf74f365b, type: 2}
   TargetAngle:
     m_InternalValue: 0
 --- !u!114 &6668293981103402830
@@ -307,7 +310,7 @@ MonoBehaviour:
   FireRate: 0.5
   FirePoint: {fileID: 8431429620435324184}
   PrefabToShoot: {fileID: 6618199215885417419, guid: 529771811978b3a4c9cf87f8db6191b7, type: 3}
-  PlayerFireEvent: {fileID: 0}
+  PlayerFireEvent: {fileID: 11400000, guid: b4fefee6814a0e2419dacf5695f1493b, type: 2}
 --- !u!114 &3078617264258378812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,7 +339,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  NetworkObject: {fileID: 0}
+  NetworkBehavior: {fileID: 465414170621730715}
 --- !u!1 &7380320558689782433
 GameObject:
   m_ObjectHideFlags: 0

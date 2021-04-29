@@ -13,15 +13,18 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     [SerializeField] private float RotationSpeed;
     [SerializeField] private float TankRotationSpeed;
     [SerializeField] private float Health;
-    //[SerializeField] private Rigidbody2D Rb;
+    [SerializeField] private float RespawnTime;
+    [SerializeField] private int Lives;
     [SerializeField] private Transform RotationPoint;
     [SerializeField] private Transform TankBaseTransform;
     [SerializeField] private List<PlayerFiringController> FiringControllers;
+    [SerializeField] private GameEvent OnDiedGameEvent;
 
 
     private float turnSmoothVelocity;
     private float m_LastSentMove;
     private float currentHealth;
+    private int livesLeft;
 
     private const float k_MoveSendRateSeconds = 0.05f;
 
@@ -29,16 +32,24 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     public event Action OnDiedEvent;
 
     public NetworkVariableFloat TargetAngle = new NetworkVariableFloat();
+
     public NetworkVariableVector2 NetworkPosition { get; } = new NetworkVariableVector2();
     public NetworkVariableVector2 FacingDirection { get; } = new NetworkVariableVector2();
 
+    public float _RespawnTime => RespawnTime;
+    public bool HasLivesLeft => livesLeft > 0;
     public float GetMoveSpeed() => MoveSpeed;
     public Vector2 GetNetworkPosition() => NetworkPosition.Value;
 
     #region Unity Functions
     private void Start()
     {
+        livesLeft = Lives;
         Initialize();
+
+        if (IsClient)
+        {
+        }
     }
     private void FixedUpdate()
     {
@@ -83,6 +94,12 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
             Debug.Log($"I Shot ({FromClientId}, {OwnerClientId}");
         }
     }
+
+    [ClientRpc]
+    public void OnDiedClientRpc(ulong FromClientId)
+    {
+        OnDiedGameEvent.Invoke(FromClientId);
+    }
     #endregion
 
     #region Helper Functions
@@ -95,6 +112,13 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
         {
             InputManager.Instance.SetLocalPlayerController(this);
         }
+    }
+
+    public void SetTransformPosition(Vector2 _position)
+    {
+        Debug.Log($"is Server: {IsServer}");
+        NetworkPosition.Value = _position;
+        transform.position = _position;
     }
 
     public void SetNetworkPosition(Vector2 _position)
@@ -116,12 +140,14 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     {
         currentHealth -= _damage;
 
-        Debug.Log($"Take Damage {_damage}, Health {currentHealth}");
         if (!IsServer) Debug.Log("Not called by SERVER!"); //Should enforce this somewhere
 
         if (currentHealth <= 0)
         {
-            OnDiedEvent?.Invoke();
+            livesLeft--;
+            OnDiedEvent?.Invoke(); //For Server
+
+            OnDiedClientRpc(OwnerClientId);
         }
     }
     #endregion

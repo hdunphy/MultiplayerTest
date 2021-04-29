@@ -30,10 +30,10 @@ public class ClientMovement : NetworkBehaviour
     {
         nextPosition = Controller.GetNetworkPosition();
         distance = Vector2.Distance(transform.position, nextPosition);
-        if (distance > 0.001f)
+        if (distance > 0.01f)
         {
             t = distance * (1 / MoveSpeed);
-            transform.position = Vector2.LerpUnclamped(transform.position, nextPosition, t);
+            transform.position = Vector2.Lerp(transform.position, nextPosition, t);
         }
     }
 }
