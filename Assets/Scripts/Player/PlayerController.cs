@@ -46,10 +46,6 @@ public class PlayerController : NetworkBehaviour, IMoveableObject
     {
         livesLeft = Lives;
         Initialize();
-
-        if (IsClient)
-        {
-        }
     }
     private void FixedUpdate()
     {
