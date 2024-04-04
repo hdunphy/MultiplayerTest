@@ -109,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2573032218885706532, guid: f79c4cf108c9f0640a090139c98aeec4, type: 3}
       propertyPath: m_Name
-      value: Bullet Prefab Smoke
+      value: Smoke Trail
       objectReference: {fileID: 0}
     - target: {fileID: 7823824639290957189, guid: f79c4cf108c9f0640a090139c98aeec4, type: 3}
       propertyPath: m_RootOrder

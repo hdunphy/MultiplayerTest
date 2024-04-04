@@ -144,6 +144,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -152,9 +153,9 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
-    aniso: -1
-    mipBias: -100
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -1072,6 +1073,47 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      terrainTiles_default_6: -3799622758998950837
+      terrainTiles_default_32: -5318175685031969729
+      terrainTiles_default_39: -3997849855020286271
+      terrainTiles_default_28: 7018496956923615493
+      terrainTiles_default_21: 1578568914420099662
+      terrainTiles_default_18: -6579163524911838218
+      terrainTiles_default_36: -3291547975694902402
+      terrainTiles_default_19: 5097082791225825122
+      terrainTiles_default_34: -713477893577209352
+      terrainTiles_default_38: 8811544741472477042
+      terrainTiles_default_37: 8904300002975162991
+      terrainTiles_default_17: 4057753395194227980
+      terrainTiles_default_7: 3483171551619263304
+      terrainTiles_default_9: 3267961430213412209
+      terrainTiles_default_8: -5909098303000479922
+      terrainTiles_default_23: -8822295628464746274
+      terrainTiles_default_27: 8105317466115277324
+      terrainTiles_default_15: 7221755723185794684
+      terrainTiles_default_5: -8894345253982974682
+      terrainTiles_default_12: -7082651845660784885
+      terrainTiles_default_14: -3500477859016875862
+      terrainTiles_default_35: 5735698333655362432
+      terrainTiles_default_30: -5446462218857727119
+      terrainTiles_default_10: -680885037062145004
+      terrainTiles_default_1: 8908279601562170909
+      terrainTiles_default_0: -8676506849857898454
+      terrainTiles_default_26: -6041708115823489996
+      terrainTiles_default_4: -170894780976921031
+      terrainTiles_default_25: -3243385858406129274
+      terrainTiles_default_16: 3834834712651164048
+      terrainTiles_default_2: -3789778737552693703
+      terrainTiles_default_3: 2343266643562174622
+      terrainTiles_default_20: -4501048108538666286
+      terrainTiles_default_31: 4281492080887868353
+      terrainTiles_default_33: -3582087841073414835
+      terrainTiles_default_22: 338109857620971774
+      terrainTiles_default_11: 5718318276124315920
+      terrainTiles_default_24: -4239528083510430577
+      terrainTiles_default_29: -5519557570430469623
+      terrainTiles_default_13: 7485121299589694066
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
